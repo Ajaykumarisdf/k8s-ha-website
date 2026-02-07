@@ -56,5 +56,5 @@ jobs:
           username: ${{ secrets.K8S_USER }}
           key: ${{ secrets.K8S_SSH_KEY }}
           script: |
-            kubectl set image deployment/ha-website nginx=${{ env.REGISTRY }}/${{ github.repository }}:latest
-            kubectl rollout status deployment/ha-website --timeout=60s
+            sudo kubectl set image deployment/ha-website nginx=${{ env.REGISTRY }}/${{ github.repository }}:latest
+            sudo kubectl rollout status deployment/ha-website --timeout=60s
