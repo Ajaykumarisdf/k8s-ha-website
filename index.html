@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K8s HA Website</title>
+    <title>K8s HA Website - CI/CD Demo</title>
     <style>
         body {
             margin: 0;
@@ -15,6 +16,7 @@
             align-items: center;
             min-height: 100vh;
         }
+
         .container {
             background: rgba(255, 255, 255, 0.95);
             padding: 60px 80px;
@@ -24,26 +26,38 @@
             max-width: 800px;
             animation: fadeIn 1s ease-in;
         }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         h1 {
             color: #333;
             font-size: 2.5em;
             margin-bottom: 20px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         .message {
             color: #555;
             font-size: 1.3em;
             line-height: 1.6;
             margin: 20px 0;
         }
+
         .highlight {
             color: #667eea;
             font-weight: bold;
         }
+
         .badge {
             display: inline-block;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -54,16 +68,25 @@
             font-size: 0.9em;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
+
+        .cicd-badge {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            margin-left: 10px;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>🚀 Kubernetes Cluster</h1>
         <div class="message">
-            <p><strong>Hit! It's <span class="highlight">Ajay Kumar</span> from K8s Cluster</strong></p>
-            <p>This website is running on a highly available Kubernetes cluster with NFS shared storage.</p>
+            <p><strong>Hey <span class="highlight">Ajay</span> deployed this site from K8s using CI/CD
+                    pipeline!</strong></p>
+            <p>This website is running on a highly available Kubernetes cluster with automated deployments.</p>
         </div>
-        <div class="badge">✓ High Availability Enabled</div>
+        <div class="badge">✓ High Availability</div>
+        <div class="badge cicd-badge">✓ CI/CD Enabled</div>
     </div>
 </body>
+
 </html>
