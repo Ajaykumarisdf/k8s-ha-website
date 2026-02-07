@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ha-website
+  labels:
+    app: ha-website
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ha-website
+  template:
+    metadata:
+      labels:
+        app: ha-website
+    spec:
+      # Anti-affinity to ensure pods run on different nodes
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - ha-website
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - name: nginx
+        # Image will be updated by CI/CD pipeline
+        image: ghcr.io/ajaykumarisdf/k8s-ha-website:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
