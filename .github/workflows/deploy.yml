@@ -58,5 +58,5 @@ jobs:
           username: ${{ secrets.K8S_USER }}
           key: ${{ secrets.K8S_SSH_KEY }}
           script: |
-            sudo kubectl set image deployment/ha-website nginx=ghcr.io/ajaykumarisdf/k8s-ha-website:latest
+            sudo kubectl rollout restart deployment/ha-website
             sudo kubectl rollout status deployment/ha-website --timeout=120s
