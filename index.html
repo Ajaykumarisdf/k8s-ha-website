@@ -4,33 +4,265 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K8s HA Website - CI/CD Demo</title>
+    <title>K8s HA Website - CI/CD + Guestbook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 40px 20px;
+        }
+
+        /* Header Section */
+        .hero {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .hero h1 {
+            font-size: 2.8em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            font-size: 1.15em;
+            color: #a0a0c0;
+            line-height: 1.6;
+        }
+
+        .hero .highlight {
+            color: #667eea;
+            font-weight: 600;
+            -webkit-text-fill-color: #667eea;
+        }
+
+        /* Badges */
+        .badges {
             display: flex;
             justify-content: center;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-flex;
             align-items: center;
-            min-height: 100vh;
-        }
-
-        .container {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 60px 80px;
+            gap: 6px;
+            padding: 8px 18px;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            max-width: 800px;
-            animation: fadeIn 1s ease-in;
+            font-size: 0.85em;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        .badge-ha {
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+        }
+
+        .badge-cicd {
+            background: rgba(17, 153, 142, 0.2);
+            color: #38ef7d;
+        }
+
+        .badge-db {
+            background: rgba(240, 147, 251, 0.2);
+            color: #f093fb;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Guestbook Card */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .card h2 {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9em;
+            font-weight: 500;
+            color: #a0a0c0;
+            margin-bottom: 6px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95em;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Entries List */
+        .entries {
+            list-style: none;
+        }
+
+        .entry {
+            padding: 16px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 12px;
+            transition: background 0.3s;
+        }
+
+        .entry:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .entry-name {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 1em;
+        }
+
+        .entry-date {
+            font-size: 0.8em;
+            color: #606080;
+        }
+
+        .entry-message {
+            color: #c0c0d0;
+            line-height: 1.5;
+            font-size: 0.95em;
+        }
+
+        /* Status Messages */
+        .status {
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 0.9em;
+            display: none;
+        }
+
+        .status.success {
+            display: block;
+            background: rgba(56, 239, 125, 0.1);
+            border: 1px solid rgba(56, 239, 125, 0.3);
+            color: #38ef7d;
+        }
+
+        .status.error {
+            display: block;
+            background: rgba(255, 82, 82, 0.1);
+            border: 1px solid rgba(255, 82, 82, 0.3);
+            color: #ff5252;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #606080;
+        }
+
+        .empty-state span {
+            font-size: 2em;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #606080;
+        }
+
+        /* Animations */
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(-20px);
+                transform: translateY(-10px);
             }
 
             to {
@@ -39,55 +271,219 @@
             }
         }
 
-        h1 {
-            color: #333;
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .message {
-            color: #555;
-            font-size: 1.3em;
-            line-height: 1.6;
-            margin: 20px 0;
+        /* Architecture Info */
+        .arch-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
         }
 
-        .highlight {
-            color: #667eea;
-            font-weight: bold;
+        .arch-item {
+            padding: 14px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
         }
 
-        .badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 25px;
-            margin-top: 20px;
-            font-size: 0.9em;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        .arch-item .icon {
+            font-size: 1.5em;
+            margin-bottom: 6px;
         }
 
-        .cicd-badge {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            margin-left: 10px;
+        .arch-item .label {
+            font-size: 0.8em;
+            color: #606080;
+        }
+
+        .arch-item .value {
+            font-size: 0.95em;
+            font-weight: 500;
+            color: #c0c0d0;
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
+
+    <!-- Hero Section -->
+    <div class="hero">
         <h1>🚀 Kubernetes Cluster</h1>
-        <div class="message">
-            <p><strong>Hey <span class="highlight">Ajay</span> deployed this site from testing purpose using CI/CD
-                    pipeline!</strong></p>
-            <p>This is one of my significant applications.</p>
-            <p>This website is running on a highly available via new deployment K8s.</p>
+        <p>
+            <strong>Hey <span class="highlight">Ajay</span> deployed this site using CI/CD pipeline!</strong><br>
+            This is one of my significant applications.<br>
+            Running on a highly available K8s cluster with persistent MySQL storage.
+        </p>
+        <div class="badges">
+            <span class="badge badge-ha">✓ High Availability</span>
+            <span class="badge badge-cicd">✓ CI/CD Pipeline</span>
+            <span class="badge badge-db">✓ MySQL + NFS</span>
         </div>
-        <div class="badge">✓ High Availability</div>
-        <div class="badge cicd-badge">✓ CI/CD Enabled</div>
     </div>
+
+    <div class="container">
+
+        <!-- Sign Guestbook -->
+        <div class="card" style="animation-delay: 0.1s;">
+            <h2>📝 Sign the Guestbook</h2>
+            <div id="status" class="status"></div>
+            <form id="guestbookForm">
+                <div class="form-group">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" placeholder="Enter your name" maxlength="100" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Your Message</label>
+                    <textarea id="message" placeholder="Leave a message..." maxlength="1000" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" id="submitBtn">Sign Guestbook</button>
+            </form>
+        </div>
+
+        <!-- Guestbook Entries -->
+        <div class="card" style="animation-delay: 0.2s;">
+            <h2>💬 Guestbook Entries</h2>
+            <div id="entries">
+                <div class="loading">Loading entries...</div>
+            </div>
+        </div>
+
+        <!-- Architecture Info -->
+        <div class="card" style="animation-delay: 0.3s;">
+            <h2>🏗️ Architecture</h2>
+            <div class="arch-info">
+                <div class="arch-item">
+                    <div class="icon">🐳</div>
+                    <div class="value">Docker + GHCR</div>
+                    <div class="label">Container Registry</div>
+                </div>
+                <div class="arch-item">
+                    <div class="icon">⚙️</div>
+                    <div class="value">GitHub Actions</div>
+                    <div class="label">CI/CD Pipeline</div>
+                </div>
+                <div class="arch-item">
+                    <div class="icon">☸️</div>
+                    <div class="value">K3s Cluster</div>
+                    <div class="label">Orchestration</div>
+                </div>
+                <div class="arch-item">
+                    <div class="icon">🗄️</div>
+                    <div class="value">MySQL + NFS</div>
+                    <div class="label">Persistent Storage</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api/guestbook';
+
+        // Load guestbook entries
+        async function loadEntries() {
+            const container = document.getElementById('entries');
+            try {
+                const res = await fetch(API_URL);
+                const entries = await res.json();
+
+                if (entries.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <span>📭</span>
+                            <p>No entries yet. Be the first to sign!</p>
+                        </div>`;
+                    return;
+                }
+
+                container.innerHTML = entries.map(entry => `
+                    <div class="entry">
+                        <div class="entry-header">
+                            <span class="entry-name">${escapeHtml(entry.name)}</span>
+                            <span class="entry-date">${formatDate(entry.created_at)}</span>
+                        </div>
+                        <div class="entry-message">${escapeHtml(entry.message)}</div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <span>⚠️</span>
+                        <p>Could not load entries. Backend API may be starting up...</p>
+                    </div>`;
+            }
+        }
+
+        // Submit new entry
+        document.getElementById('guestbookForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const status = document.getElementById('status');
+            const name = document.getElementById('name').value.trim();
+            const message = document.getElementById('message').value.trim();
+
+            if (!name || !message) return;
+
+            btn.disabled = true;
+            btn.textContent = 'Signing...';
+
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, message })
+                });
+
+                if (res.ok) {
+                    status.className = 'status success';
+                    status.textContent = '✅ Successfully signed the guestbook!';
+                    document.getElementById('name').value = '';
+                    document.getElementById('message').value = '';
+                    await loadEntries();
+                    setTimeout(() => { status.style.display = 'none'; }, 3000);
+                } else {
+                    const data = await res.json();
+                    throw new Error(data.error || 'Failed to sign');
+                }
+            } catch (err) {
+                status.className = 'status error';
+                status.textContent = '❌ ' + err.message;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Sign Guestbook';
+            }
+        });
+
+        // Helpers
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatDate(dateStr) {
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('en-US', {
+                year: 'numeric', month: 'short', day: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+        }
+
+        // Load on page load
+        loadEntries();
+    </script>
 </body>
 
 </html>

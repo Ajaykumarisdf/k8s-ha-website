@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: guestbook-api-service
+spec:
+  type: ClusterIP
+  selector:
+    app: guestbook-api
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 3000
