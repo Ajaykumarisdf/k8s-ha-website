@@ -51,6 +51,18 @@ jobs:
       IMAGE_NAME_LOWER: ajaykumarisdf/k8s-ha-website
     
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Copy deployment file to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.K8S_HOST }}
+          username: ${{ secrets.K8S_USER }}
+          key: ${{ secrets.K8S_SSH_KEY }}
+          source: "deployment.yaml"
+          target: "/home/ubuntu/k8s-ha-website"
+
       - name: Deploy to Kubernetes
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -58,5 +70,6 @@ jobs:
           username: ${{ secrets.K8S_USER }}
           key: ${{ secrets.K8S_SSH_KEY }}
           script: |
+            cd /home/ubuntu/k8s-ha-website
             sudo kubectl apply -f deployment.yaml
             sudo kubectl rollout status deployment/ha-website --timeout=120s
