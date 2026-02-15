@@ -72,4 +72,4 @@ jobs:
           script: |
             cd /home/ubuntu/k8s-ha-website
             sudo kubectl apply -f deployment.yaml
-            sudo kubectl rollout restart deployment/ha-website --timeout=120s
+            sudo kubectl rollout restart deployment/ha-website
