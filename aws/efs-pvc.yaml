@@ -1,0 +1,14 @@
+# PVC using AWS EFS StorageClass (replaces NFS PV/PVC)
+# This provides ReadWriteMany access across all nodes/pods
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: efs-website-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: efs-sc
+  resources:
+    requests:
+      storage: 5Gi

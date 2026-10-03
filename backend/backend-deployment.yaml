@@ -21,23 +21,86 @@ spec:
         ports:
         - containerPort: 3000
         env:
+        # ─── AWS RDS Connection (from rds-secret) ───
         - name: DB_HOST
-          value: "mysql-service"
+          valueFrom:
+            secretKeyRef:
+              name: rds-secret
+              key: rds-endpoint
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              name: rds-secret
+              key: rds-port
         - name: DB_NAME
           valueFrom:
             secretKeyRef:
-              name: mysql-secret
-              key: mysql-database
+              name: rds-secret
+              key: rds-database
         - name: DB_USER
           valueFrom:
             secretKeyRef:
-              name: mysql-secret
-              key: mysql-user
+              name: rds-secret
+              key: rds-user
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: mysql-secret
-              key: mysql-password
+              name: rds-secret
+              key: rds-password
+        # ─── AWS S3 Config (from s3-configmap) ───
+        - name: S3_BUCKET_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: s3-config
+              key: S3_BUCKET_NAME
+        - name: S3_REGION
+          valueFrom:
+            configMapKeyRef:
+              name: s3-config
+              key: S3_REGION
+        # ─── Kubernetes Downward API ───
+        # These expose pod/node metadata as env vars for HA visualization
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        # ─── Resource Info ───
+        - name: CPU_REQUEST
+          valueFrom:
+            resourceFieldRef:
+              containerName: guestbook-api
+              resource: requests.cpu
+        - name: CPU_LIMIT
+          valueFrom:
+            resourceFieldRef:
+              containerName: guestbook-api
+              resource: limits.cpu
+        - name: MEMORY_REQUEST
+          valueFrom:
+            resourceFieldRef:
+              containerName: guestbook-api
+              resource: requests.memory
+        - name: MEMORY_LIMIT
+          valueFrom:
+            resourceFieldRef:
+              containerName: guestbook-api
+              resource: limits.memory
         resources:
           requests:
             memory: "64Mi"

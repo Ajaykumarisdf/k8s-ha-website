@@ -1,0 +1,16 @@
+# AWS S3 Configuration for static assets and backups
+# The S3 bucket is used for:
+#   1. Static asset storage (images, CSS, JS bundles)
+#   2. Database backup storage
+#   3. Application log archival
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: s3-config
+data:
+  S3_BUCKET_NAME: "ha-wb-k8s-cluster-937911240064-us-east-1-an"
+  S3_REGION: "us-east-1"
+  S3_BACKUP_PREFIX: "db-backups/"
+  S3_ASSETS_PREFIX: "static-assets/"
+  S3_LOGS_PREFIX: "app-logs/"
