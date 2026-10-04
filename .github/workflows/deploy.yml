@@ -75,7 +75,7 @@ jobs:
           host: ${{ secrets.K8S_HOST }}
           username: ${{ secrets.K8S_USER }}
           key: ${{ secrets.K8S_SSH_KEY }}
-          source: "deployment.yaml,service.yaml,ingress.yaml,backend/backend-deployment.yaml,backend/backend-service.yaml,aws/s3-configmap.yaml,aws/efs-storageclass.yaml,aws/efs-pvc.yaml"
+          source: "deployment.yaml,service.yaml,ingress.yaml,backend/backend-deployment.yaml,backend/backend-service.yaml,aws/s3-configmap.yaml,aws/efs-storageclass.yaml,aws/efs-pvc.yaml,nginx-configmap.yaml"
           target: "/home/ubuntu/k8s-ha-website"
 
       - name: Deploy to Kubernetes
@@ -92,6 +92,7 @@ jobs:
             sudo kubectl apply -f aws/efs-storageclass.yaml
             sudo kubectl apply -f aws/efs-pvc.yaml
             # Apply application manifests
+            sudo kubectl apply -f nginx-configmap.yaml
             sudo kubectl apply -f deployment.yaml
             sudo kubectl apply -f service.yaml
             sudo kubectl apply -f ingress.yaml

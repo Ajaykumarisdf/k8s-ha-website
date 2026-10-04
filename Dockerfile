@@ -1,7 +1,8 @@
 FROM nginx:alpine
 
-# Copy website content
+# Copy website content and Nginx reverse proxy configuration
 COPY index.html /usr/share/nginx/html/
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80
 EXPOSE 80
