@@ -14,3 +14,8 @@ Thumbs.db
 *.log
 aws/rds-secret.yaml
 
+# Node
+node_modules/
+backend/node_modules/
+package-lock.json
+backend/package-lock.json

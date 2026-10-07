@@ -830,6 +830,168 @@
         @keyframes spin {
             100% { transform: rotate(360deg); }
         }
+
+        /* ─── High Availability Storage Hub ─── */
+        .storage-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .storage-tab-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .storage-tab-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+        }
+
+        .storage-tab-btn.active {
+            background: var(--gradient-card);
+            border-color: var(--accent-purple);
+            color: #ffffff;
+            box-shadow: 0 4px 16px rgba(168, 85, 247, 0.25);
+        }
+
+        .storage-tab-btn.s3-tab.active {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.1));
+            border-color: #f59e0b;
+            color: #fbbf24;
+            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.2);
+        }
+
+        .ha-info-banner {
+            padding: 14px 18px;
+            border-radius: 12px;
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            font-size: 0.88rem;
+            line-height: 1.5;
+            color: #c7d2fe;
+            margin-bottom: 20px;
+        }
+
+        .ha-info-banner.s3-banner {
+            background: rgba(245, 158, 11, 0.08);
+            border-color: rgba(245, 158, 11, 0.25);
+            color: #fde68a;
+        }
+
+        .upload-section-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .upload-section-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .dropzone-box {
+            border: 2px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: rgba(255, 255, 255, 0.02);
+            margin-bottom: 14px;
+        }
+
+        .dropzone-box:hover {
+            border-color: var(--accent-purple);
+            background: rgba(168, 85, 247, 0.05);
+        }
+
+        .storage-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 14px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+
+        .gallery-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .gallery-card:hover {
+            border-color: var(--accent-purple);
+            transform: translateY(-2px);
+        }
+
+        .gallery-thumb {
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+            background: #000;
+        }
+
+        .gallery-meta {
+            padding: 10px;
+            font-size: 0.78rem;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .gallery-title {
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-primary);
+        }
+
+        .gallery-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .s3-action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border-radius: 10px;
+            text-decoration: none;
+            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .s3-action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(245, 158, 11, 0.45);
+        }
     </style>
 </head>
 
@@ -858,6 +1020,11 @@
                 <span class="tech-badge aws-rds">◉ AWS RDS</span>
                 <span class="tech-badge aws-s3">◎ AWS S3</span>
                 <span class="tech-badge cicd">⚡ CI/CD</span>
+            </div>
+            <div style="margin-top: 16px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                <a href="videos.html" class="s3-action-btn" id="headerVideoBtn">
+                    🎬 Open S3 Video Player (videos.html) ↗
+                </a>
             </div>
         </header>
 
@@ -950,6 +1117,130 @@
             <div class="pod-dashboard" id="podDashboard">
                 <div class="loading-spinner">Loading pod information</div>
             </div>
+        </div>
+
+        <!-- ═══ High Availability Storage Studio (AWS EFS & AWS S3) ═══ -->
+        <div class="card fade-in fade-in-3" id="haStorageStudio">
+            <div class="card-header">
+                <div class="card-title">
+                    <span class="icon">💾</span>
+                    High Availability Storage Hub
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <a href="videos.html" class="s3-action-btn">
+                        🎬 Open S3 Video Player ↗
+                    </a>
+                </div>
+            </div>
+
+            <!-- Tab Switcher -->
+            <div class="storage-tabs">
+                <button type="button" class="storage-tab-btn active" id="tabBtnEfs" onclick="switchStorageTab('efs')">
+                    📁 AWS EFS Shared Storage (ReadWriteMany)
+                </button>
+                <button type="button" class="storage-tab-btn s3-tab" id="tabBtnS3" onclick="switchStorageTab('s3')">
+                    📦 AWS S3 Cloud Object Storage (Videos & Media)
+                </button>
+            </div>
+
+            <!-- ─── Panel 1: AWS EFS (Images & Pod Shared Persistence) ─── -->
+            <div id="panelEfs">
+                <div class="ha-info-banner">
+                    <strong>💡 How AWS EFS provides High Availability:</strong>
+                    When you upload an image below, it is written to the shared file system volume (<code>efs-website-pvc</code>).
+                    Because EFS supports <strong>ReadWriteMany (RWX)</strong>, all 3 frontend pods and 2 backend pods running across different EC2 worker nodes immediately have shared access to this file. Pod restarts or node failures do not cause data loss.
+                </div>
+
+                <div class="upload-section-grid">
+                    <!-- EFS Upload Form -->
+                    <div>
+                        <form id="efsUploadForm">
+                            <div class="dropzone-box" id="efsDropzone" onclick="document.getElementById('efsFileInput').click()">
+                                <div style="font-size: 36px; margin-bottom: 8px;">🖼️</div>
+                                <div id="efsDropzoneText" style="font-weight: 600; font-size: 0.95rem;">Select Image to Store in AWS EFS</div>
+                                <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">PNG, JPG, WEBP, GIF (Shared across all pods)</div>
+                                <input type="file" id="efsFileInput" style="display: none;" accept="image/*">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="efsImageTitle">Image Title / Description</label>
+                                <input type="text" id="efsImageTitle" placeholder="e.g. Cluster Architecture Diagram" maxlength="100">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" id="efsSubmitBtn" style="width: 100%;">
+                                📁 Save to AWS EFS (RWX) ✦
+                            </button>
+                            <div id="efsUploadStatus" class="status" style="margin-top: 12px; display: none;"></div>
+                        </form>
+                    </div>
+
+                    <!-- EFS Gallery -->
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <div style="font-weight: 600; font-size: 0.95rem;">
+                                📁 Files on EFS Volume (<code>/app/efs-data/images</code>)
+                            </div>
+                            <span class="refresh-badge" id="efsCountBadge">0 files</span>
+                        </div>
+                        <div class="storage-gallery" id="efsGallery">
+                            <div style="grid-column: 1/-1; text-align: center; padding: 30px; color: var(--text-muted);">
+                                Loading EFS files...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── Panel 2: AWS S3 (Videos & Media Offloading) ─── -->
+            <div id="panelS3" style="display: none;">
+                <div class="ha-info-banner s3-banner">
+                    <strong>⚡ How AWS S3 provides High Availability:</strong>
+                    Large media files like videos are offloaded to <strong>Amazon S3 Object Storage</strong> (<code>ha-wb-k8s-cluster-937911240064-us-east-1-an</code>).
+                    This eliminates disk pressure on Kubernetes nodes, prevents pod evictions, and delivers <strong>99.999999999% durability</strong> with native HTTP range streaming.
+                </div>
+
+                <div class="upload-section-grid">
+                    <!-- S3 Upload Form -->
+                    <div>
+                        <form id="s3UploadForm">
+                            <div class="dropzone-box" id="s3Dropzone" onclick="document.getElementById('s3FileInput').click()" style="border-color: rgba(245, 158, 11, 0.35);">
+                                <div style="font-size: 36px; margin-bottom: 8px;">🎬</div>
+                                <div id="s3DropzoneText" style="font-weight: 600; font-size: 0.95rem; color: #fbbf24;">Select Video for AWS S3</div>
+                                <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">MP4, WebM, MOV (Streamed via S3)</div>
+                                <input type="file" id="s3FileInput" style="display: none;" accept="video/mp4,video/webm,video/quicktime,video/x-matroska">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="s3VideoTitle">Video Title</label>
+                                <input type="text" id="s3VideoTitle" placeholder="e.g. Kubernetes Demo Video" maxlength="150">
+                            </div>
+
+                            <button type="submit" class="s3-action-btn" id="s3SubmitBtn" style="width: 100%; justify-content: center;">
+                                🚀 Stream to AWS S3 Bucket ✦
+                            </button>
+                            <div id="s3UploadStatus" class="status" style="margin-top: 12px; display: none;"></div>
+                        </form>
+                    </div>
+
+                    <!-- S3 Summary List -->
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <div style="font-weight: 600; font-size: 0.95rem;">
+                                📦 Videos in S3 Bucket (<code>ha-wb-k8s-cluster-...</code>)
+                            </div>
+                            <a href="videos.html" class="s3-action-btn" style="padding: 4px 10px; font-size: 0.75rem;">
+                                🎬 Watch in Video Player ▶
+                            </a>
+                        </div>
+                        <div class="storage-gallery" id="s3SummaryList">
+                            <div style="grid-column: 1/-1; text-align: center; padding: 30px; color: var(--text-muted);">
+                                Loading S3 videos...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- ═══ Two Column: Guestbook + Architecture ═══ -->
@@ -1181,7 +1472,7 @@
             if (btn) btn.disabled = true;
 
             try {
-                await Promise.all([fetchPodInfo(), loadEntries()]);
+                await Promise.all([fetchPodInfo(), loadEntries(), loadEfsImages(), loadS3VideosSummary()]);
             } finally {
                 setTimeout(() => {
                     if (icon) icon.classList.remove('spinning');
@@ -1270,12 +1561,251 @@
             }
         });
 
+        // ─── Storage Hub Tab Switcher ───
+        function switchStorageTab(tab) {
+            const panelEfs = document.getElementById('panelEfs');
+            const panelS3 = document.getElementById('panelS3');
+            const btnEfs = document.getElementById('tabBtnEfs');
+            const btnS3 = document.getElementById('tabBtnS3');
+
+            if (tab === 'efs') {
+                panelEfs.style.display = 'block';
+                panelS3.style.display = 'none';
+                btnEfs.classList.add('active');
+                btnS3.classList.remove('active');
+            } else {
+                panelEfs.style.display = 'none';
+                panelS3.style.display = 'block';
+                btnEfs.classList.remove('active');
+                btnS3.classList.add('active');
+            }
+        }
+
+        // ─── EFS Image Management ───
+        const efsFileInput = document.getElementById('efsFileInput');
+        let selectedEfsFile = null;
+
+        efsFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                selectedEfsFile = e.target.files[0];
+                document.getElementById('efsDropzoneText').innerHTML =
+                    `Selected: <strong>${escapeHtml(selectedEfsFile.name)}</strong> (${(selectedEfsFile.size / 1024).toFixed(1)} KB)`;
+                if (!document.getElementById('efsImageTitle').value) {
+                    const base = selectedEfsFile.name.substring(0, selectedEfsFile.name.lastIndexOf('.')) || selectedEfsFile.name;
+                    document.getElementById('efsImageTitle').value = base;
+                }
+            }
+        });
+
+        document.getElementById('efsUploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const status = document.getElementById('efsUploadStatus');
+            const btn = document.getElementById('efsSubmitBtn');
+
+            if (!selectedEfsFile) {
+                status.className = 'status error';
+                status.textContent = '❌ Please select an image file first';
+                status.style.display = 'block';
+                return;
+            }
+
+            const title = document.getElementById('efsImageTitle').value.trim();
+            btn.disabled = true;
+            btn.textContent = 'Saving to AWS EFS...';
+
+            const formData = new FormData();
+            formData.append('image', selectedEfsFile);
+            if (title) formData.append('title', title);
+
+            try {
+                const res = await fetch(`${API_URL}/upload/image`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    status.className = 'status success';
+                    status.innerHTML = `✅ Saved to AWS EFS! Served by Pod: <code>${data.uploaded_by_pod}</code> on Node: <code>${data.uploaded_by_node}</code>`;
+                    status.style.display = 'block';
+                    selectedEfsFile = null;
+                    document.getElementById('efsFileInput').value = '';
+                    document.getElementById('efsDropzoneText').textContent = 'Select Image to Store in AWS EFS';
+                    document.getElementById('efsImageTitle').value = '';
+                    await loadEfsImages();
+                    setTimeout(() => { status.style.display = 'none'; }, 6000);
+                } else {
+                    const errData = await res.json();
+                    throw new Error(errData.error || 'Failed to save to EFS');
+                }
+            } catch (err) {
+                status.className = 'status error';
+                status.textContent = '❌ ' + err.message;
+                status.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '📁 Save to AWS EFS (RWX) ✦';
+            }
+        });
+
+        async function loadEfsImages() {
+            const gallery = document.getElementById('efsGallery');
+            const badge = document.getElementById('efsCountBadge');
+            try {
+                const res = await fetch(`${API_URL}/efs-images`);
+                const data = await res.json();
+                const images = data.images || [];
+
+                badge.textContent = `${images.length} file${images.length === 1 ? '' : 's'}`;
+
+                if (images.length === 0) {
+                    gallery.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 30px; color: var(--text-muted);">
+                            <span>📭</span>
+                            <p>No images in EFS volume yet. Upload one on the left!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                gallery.innerHTML = images.map(img => `
+                    <div class="gallery-card">
+                        <img src="${img.url}" class="gallery-thumb" alt="${escapeAttr(img.title)}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100\\' height=\\'100\\'><rect fill=\\'%23111827\\' width=\\'100\\' height=\\'100\\'/><text fill=\\'%239ca3af\\' x=\\'50%\\' y=\\'50%\\' dominant-baseline=\\'middle\\' text-anchor=\\'middle\\' font-size=\\'12\\'>EFS Image</text></svg>'">
+                        <div class="gallery-meta">
+                            <div class="gallery-title" title="${escapeAttr(img.title)}">${escapeHtml(img.title)}</div>
+                            <div class="gallery-badge">📦 ${img.formatted_size}</div>
+                            <div class="gallery-badge" style="color: #818cf8;">🐳 ${escapeHtml(img.uploaded_by_pod ? img.uploaded_by_pod.split('-').slice(-2).join('-') : 'efs')}</div>
+                            <div class="gallery-badge" style="color: #34d399;">🖥️ ${escapeHtml(img.uploaded_by_node)}</div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                gallery.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 20px; color: var(--accent-red);">
+                        ⚠️ Could not load EFS files.
+                    </div>
+                `;
+            }
+        }
+
+        // ─── S3 Video Management Summary ───
+        const s3FileInput = document.getElementById('s3FileInput');
+        let selectedS3File = null;
+
+        s3FileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                selectedS3File = e.target.files[0];
+                document.getElementById('s3DropzoneText').innerHTML =
+                    `Selected: <strong>${escapeHtml(selectedS3File.name)}</strong> (${(selectedS3File.size / 1024 / 1024).toFixed(2)} MB)`;
+                if (!document.getElementById('s3VideoTitle').value) {
+                    const base = selectedS3File.name.substring(0, selectedS3File.name.lastIndexOf('.')) || selectedS3File.name;
+                    document.getElementById('s3VideoTitle').value = base;
+                }
+            }
+        });
+
+        document.getElementById('s3UploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const status = document.getElementById('s3UploadStatus');
+            const btn = document.getElementById('s3SubmitBtn');
+
+            if (!selectedS3File) {
+                status.className = 'status error';
+                status.textContent = '❌ Please select a video file first';
+                status.style.display = 'block';
+                return;
+            }
+
+            const title = document.getElementById('s3VideoTitle').value.trim();
+            btn.disabled = true;
+            btn.textContent = 'Streaming to AWS S3...';
+
+            const formData = new FormData();
+            formData.append('video', selectedS3File);
+            if (title) formData.append('title', title);
+
+            try {
+                const res = await fetch(`${API_URL}/upload/video`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    status.className = 'status success';
+                    status.innerHTML = `✅ Streamed to AWS S3 (<code>${data.s3_key}</code>) by Pod: <code>${data.uploaded_by_pod}</code>! <a href="videos.html" style="color:#fbbf24;font-weight:600;margin-left:8px;">Watch Now ▶</a>`;
+                    status.style.display = 'block';
+                    selectedS3File = null;
+                    document.getElementById('s3FileInput').value = '';
+                    document.getElementById('s3DropzoneText').textContent = 'Select Video for AWS S3';
+                    document.getElementById('s3VideoTitle').value = '';
+                    await loadS3VideosSummary();
+                    setTimeout(() => { status.style.display = 'none'; }, 8000);
+                } else {
+                    const errData = await res.json();
+                    throw new Error(errData.error || 'Failed to upload to S3');
+                }
+            } catch (err) {
+                status.className = 'status error';
+                status.textContent = '❌ ' + err.message;
+                status.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🚀 Stream to AWS S3 Bucket ✦';
+            }
+        });
+
+        async function loadS3VideosSummary() {
+            const list = document.getElementById('s3SummaryList');
+            try {
+                const res = await fetch(`${API_URL}/videos`);
+                const data = await res.json();
+                const videos = data.videos || [];
+
+                if (videos.length === 0) {
+                    list.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 30px; color: var(--text-muted);">
+                            <span>📭</span>
+                            <p>No videos in S3 yet. Upload one on the left!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                list.innerHTML = videos.slice(0, 6).map(v => `
+                    <div class="gallery-card" style="border-color: rgba(245, 158, 11, 0.2);">
+                        <div style="height: 100px; background: rgba(245, 158, 11, 0.08); display: flex; align-items: center; justify-content: center; font-size: 32px;">
+                            🎬
+                        </div>
+                        <div class="gallery-meta">
+                            <div class="gallery-title" title="${escapeAttr(v.title)}">${escapeHtml(v.title)}</div>
+                            <div class="gallery-badge" style="color: #fbbf24;">📦 ${v.formatted_size}</div>
+                            <a href="videos.html" class="s3-action-btn" style="padding: 4px 8px; font-size: 0.72rem; justify-content: center; margin-top: 4px;">
+                                Play ▶
+                            </a>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                list.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 20px; color: var(--accent-red);">
+                        ⚠️ Could not load S3 videos summary.
+                    </div>
+                `;
+            }
+        }
+
         // ─── Helpers ───
         function escapeHtml(text) {
             if (!text) return '';
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        function escapeAttr(text) {
+            if (!text) return '';
+            return text.replace(/'/g, "\\'").replace(/"/g, '&quot;');
         }
 
         function formatDate(dateStr) {
@@ -1289,7 +1819,7 @@
         // ─── Initialize ───
         async function init() {
             // Initial load only — auto-refresh removed
-            await Promise.all([fetchPodInfo(), loadEntries()]);
+            await Promise.all([fetchPodInfo(), loadEntries(), loadEfsImages(), loadS3VideosSummary()]);
         }
 
         init();

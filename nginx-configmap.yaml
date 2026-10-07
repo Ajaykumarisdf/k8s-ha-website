@@ -7,11 +7,26 @@ data:
     server {
         listen       80;
         server_name  localhost;
+        client_max_body_size 100M;
 
         location / {
             root   /usr/share/nginx/html;
             index  index.html index.htm;
             try_files $uri $uri/ /index.html;
+        }
+
+        # Shared AWS EFS uploads directly served across all frontend pods
+        location /efs-data/ {
+            alias /usr/share/nginx/html/efs-data/;
+            autoindex off;
+            expires 1h;
+            add_header Cache-Control "public, no-transform";
+            try_files $uri @efs_api_fallback;
+        }
+
+        location @efs_api_fallback {
+            rewrite ^/efs-data/images/(.*)$ /api/efs-images/$1 break;
+            proxy_pass http://guestbook-api-service:3000;
         }
 
         # Reverse proxy /api to the backend Kubernetes service
@@ -25,6 +40,9 @@ data:
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
+            client_max_body_size 100M;
+            proxy_read_timeout 300s;
+            proxy_connect_timeout 75s;
         }
 
         error_page   500 502 503 504  /50x.html;

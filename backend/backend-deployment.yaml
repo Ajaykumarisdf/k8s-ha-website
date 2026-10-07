@@ -14,6 +14,8 @@ spec:
       labels:
         app: guestbook-api
     spec:
+      securityContext:
+        fsGroup: 1000
       containers:
       - name: guestbook-api
         image: ghcr.io/ajaykumarisdf/k8s-ha-website-api:latest
@@ -58,6 +60,9 @@ spec:
             configMapKeyRef:
               name: s3-config
               key: S3_REGION
+        # ─── AWS EFS Config ───
+        - name: EFS_MOUNT_PATH
+          value: "/app/efs-data"
         # ─── Kubernetes Downward API ───
         # These expose pod/node metadata as env vars for HA visualization
         - name: POD_NAME
@@ -120,3 +125,10 @@ spec:
             port: 3000
           initialDelaySeconds: 10
           periodSeconds: 5
+        volumeMounts:
+        - name: efs-storage
+          mountPath: /app/efs-data
+      volumes:
+      - name: efs-storage
+        persistentVolumeClaim:
+          claimName: efs-website-pvc
