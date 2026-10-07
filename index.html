@@ -1635,8 +1635,19 @@
                     await loadEfsImages();
                     setTimeout(() => { status.style.display = 'none'; }, 6000);
                 } else {
-                    const errData = await res.json();
-                    throw new Error(errData.error || 'Failed to save to EFS');
+                    let errMsg = `Server returned status ${res.status}`;
+                    if (res.status === 413) {
+                        errMsg = 'File is too large (maximum allowed size is 25MB)';
+                    } else {
+                        try {
+                            const errData = await res.json();
+                            errMsg = errData.error || errMsg;
+                        } catch (e) {
+                            const text = await res.text().catch(() => '');
+                            if (text && !text.startsWith('<')) errMsg = text.substring(0, 150);
+                        }
+                    }
+                    throw new Error(errMsg);
                 }
             } catch (err) {
                 status.className = 'status error';
@@ -1742,8 +1753,21 @@
                     await loadS3VideosSummary();
                     setTimeout(() => { status.style.display = 'none'; }, 8000);
                 } else {
-                    const errData = await res.json();
-                    throw new Error(errData.error || 'Failed to upload to S3');
+                    let errMsg = `Server returned status ${res.status}`;
+                    if (res.status === 413) {
+                        errMsg = 'File is too large (maximum allowed video size is 100MB)';
+                    } else if (res.status === 504) {
+                        errMsg = 'Gateway timeout while streaming video to S3';
+                    } else {
+                        try {
+                            const errData = await res.json();
+                            errMsg = errData.error || errMsg;
+                        } catch (e) {
+                            const text = await res.text().catch(() => '');
+                            if (text && !text.startsWith('<')) errMsg = text.substring(0, 150);
+                        }
+                    }
+                    throw new Error(errMsg);
                 }
             } catch (err) {
                 status.className = 'status error';

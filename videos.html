@@ -1218,11 +1218,21 @@
                         const newVid = allVideos.find(v => v.s3_key === data.s3_key);
                         if (newVid) selectVideo(newVid);
                     } else {
-                        let errMsg = 'Upload failed';
-                        try {
-                            const errData = JSON.parse(xhr.responseText);
-                            errMsg = errData.error || errMsg;
-                        } catch (e) { }
+                        let errMsg = `Upload failed (${xhr.status})`;
+                        if (xhr.status === 413) {
+                            errMsg = 'File is too large (maximum allowed video size is 100MB)';
+                        } else if (xhr.status === 504) {
+                            errMsg = 'Gateway timeout while streaming video to S3';
+                        } else {
+                            try {
+                                const errData = JSON.parse(xhr.responseText);
+                                errMsg = errData.error || errMsg;
+                            } catch (e) {
+                                if (xhr.responseText && !xhr.responseText.startsWith('<')) {
+                                    errMsg = xhr.responseText.substring(0, 150);
+                                }
+                            }
+                        }
                         showStatus('❌ ' + errMsg, 'error');
                     }
                     submitBtn.disabled = false;
